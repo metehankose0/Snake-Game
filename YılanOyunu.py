@@ -23,19 +23,18 @@ detector = HandDetector(detectionCon=0.8, maxHands=1)
 
 class SnakeGameClass:
     def __init__(self, pathFood):
-        self.points = [] # Yılanın tüm noktaları
-        self.lengths = [] # Her nokta arasındaki mesafe
+        self.points = [] 
+        self.lengths = [] 
         self.currentLenght = 0
         self.allowedLenght = 150
-        self.previousHead = 0, 0 # Başlangıç noktası (x, y)
+        self.previousHead = 0, 0 
 
         self.imgFood = cv2.imread(pathFood, cv2.IMREAD_UNCHANGED)
         if self.imgFood is None:
-            # Eğer resim yoksa hata vermemesi için boş bir kare oluşturur
             self.imgFood = np.zeros((50, 50, 3), np.uint8)
             print("Uyari: Donut.png bulunamadi!")
         else:
-            # Ekrandan taşmasını önlemek ve yılanın ağzına sığması için 50x50 boyutuna küçültüyoruz
+            
             self.imgFood = cv2.resize(self.imgFood, (50, 50))
             
         self.hFood, self.wFood, _ = self.imgFood.shape
@@ -64,7 +63,7 @@ class SnakeGameClass:
     def randomBombLocation(self):
         self.bombPoint = random.randint(100, 1000), random.randint(100, 600)
         self.bombActive = True
-        self.bombTimer = 100 # Bombanın ekranda kalma süresi (frame cinsinden)
+        self.bombTimer = 100 # Bombanın ekranda kalma süresi
     def update(self, imgMain, currentHead):
         if self.gameOver:
             cvzone.putTextRect(imgMain, "Game Over", [300, 200],
@@ -87,7 +86,7 @@ class SnakeGameClass:
             self.currentLenght += distance
             self.previousHead = cx, cy
 
-            # Uzunluk Azaltma (Yılanın kuyruğunu silme)
+            # Yılan haraket etme işleyişi
             if self.currentLenght > self.allowedLenght:
                 for i, length in enumerate(self.lengths):
                     self.currentLenght -= length
@@ -105,7 +104,7 @@ class SnakeGameClass:
                 self.allowedLenght += 50
                 self.score += 1
                 
-            # Bomba çıkma ihtimali (rastgele belli karelerde)
+            
             if not self.bombActive and random.randint(0, 100) < 2:
                 self.randomBombLocation()
 
@@ -116,7 +115,7 @@ class SnakeGameClass:
                         cv2.line(imgMain, tuple(self.points[i - 1]), tuple(self.points[i]), (0, 0, 255), 20)
                 cv2.circle(imgMain, tuple(self.points[-1]), 20, (0, 255, 0), cv2.FILLED)
 
-            # Yemek Çizme
+            # Yemek Çizimi
             imgMain = cvzone.overlayPNG(imgMain, self.imgFood,
                                         (rx - self.wFood // 2, ry - self.hFood // 2))
 
@@ -127,7 +126,7 @@ class SnakeGameClass:
                     self.bombActive = False
                 else:
                     bx, by = self.bombPoint
-                    # Siyah renk bomba zeminini ve kırmızı bir harf çizimi
+                    
                     cv2.circle(imgMain, (bx, by), 30, (0, 0, 0), cv2.FILLED)
                     cvzone.putTextRect(imgMain, "B", [bx-12, by+10], scale=2, thickness=3, colorT=(0, 0, 255), colorR=(0,0,0), offset=0)
                     
@@ -193,18 +192,17 @@ while True:
 
     if hands:
         lmList = hands[0]['lmList']
-        pointIndex = lmList[8][0:2] # İşaret parmağı ucu
+        pointIndex = lmList[8][0:2] 
         img = game.update(img, pointIndex)
         
-        # Yeniden başlama kontrolü: İşaret ve başparmak arası mesafe
         if game.gameOver:
             x1, y1 = lmList[8][0:2]
             x2, y2 = lmList[4][0:2]
             dist = math.hypot(x2 - x1, y2 - y1)
             
-            # Mesafe kısaysa (parmaklar birleştiyse) ve oyun bittiyse sıfırla
+            
             if dist < 45:
-                play_sound(1500, 200) # Yeniden başlama sesi
+                play_sound(1500, 200) 
                 game.gameOver = False
                 game.score = 0
                 game.bombActive = False
@@ -214,5 +212,5 @@ while True:
     if key == ord('r'):
         game.gameOver = False
         game.score = 0
-    if key == 27: # ESC ile çıkış
+    if key == 27: 
         break
