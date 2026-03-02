@@ -42,4 +42,4 @@ Bu projenin kendi bilgisayarınızda sorunsuzca çalışabilmesi için sistemde 
 
 ---
 
-_Metehan tarafından geliştirilmiştir_ 🚀 
+ 
